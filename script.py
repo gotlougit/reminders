@@ -2,14 +2,14 @@ import sqlite3
 import time as timemodule
 
 def createtable(cur):
-    query = "CREATE TABLE IF NOT EXISTS reminders(id INTEGER PRIMARY KEY, eventdesc VARCHAR, eventtime DATETIME)"
+    query = "CREATE TABLE IF NOT EXISTS reminders(id INTEGER PRIMARY KEY, eventdesc VARCHAR, eventtime DATETIME, recurring BOOL, frequency INTEGER)"
     cur.execute(query)
 
 def createreminder(cur, desc, time):
     if time == 0:
         print("Error! Can't insert 0 into time")
         return
-    query = f"INSERT INTO reminders (eventdesc, eventtime) VALUES ('{desc}', datetime({time}, 'unixepoch'))"
+    query = f"INSERT INTO reminders (eventdesc, eventtime, recurring, frequency) VALUES ('{desc}', datetime({time}, 'unixepoch', false, 0))"
     cur.execute(query)
 
 def parsetime(time):
