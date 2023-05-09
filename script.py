@@ -27,6 +27,7 @@ def parsetime(time):
             amt = int(time.split("minute")[0]) * 60
         parsedtime += amt
     # absolute date, we must parse raw date given
+    # TODO: actually implement this
     else:
         datetuple = timemodule.strptime(time, "%d/%m/%y")
         unixtimestamp = int(timemodule.mktime(datetuple))
