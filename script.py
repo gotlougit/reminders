@@ -1,18 +1,18 @@
 import sqlite3
 import time as timemodule
 
-def createtable(cur):
+def create_table_if_needed(cur):
     query = "CREATE TABLE IF NOT EXISTS reminders(id INTEGER PRIMARY KEY, eventdesc VARCHAR, eventtime DATETIME, recurring BOOL, frequency INTEGER)"
     cur.execute(query)
 
-def createreminder(cur, desc, time):
+def add_reminder(cur, desc, time):
     if time == 0:
         print("Error! Can't insert 0 into time")
         return
     query = f"INSERT INTO reminders (eventdesc, eventtime, recurring, frequency) VALUES ('{desc}', datetime({time}, 'unixepoch'), false, 0)"
     cur.execute(query)
 
-def parsetime(time):
+def parse_time(time):
     time = time.lower()
     parsedtime = timemodule.time()
     # relative date parsing using heuristics
@@ -39,7 +39,7 @@ def parsetime(time):
             parsedtime = 0
     return parsedtime
 
-def upcomingevents(cur):
+def print_upcoming_events(cur):
     res = cur.execute("SELECT eventdesc, eventtime FROM reminders ORDER BY eventtime").fetchall()
     for i in res:
         print(f"Event: {i[0]}, to be triggered at {i[1]}")
@@ -51,10 +51,10 @@ time = input("(Hint- write 4 hours later or just a date like 13/4/23): ")
 con = sqlite3.connect("reminders.db")
 cur = con.cursor()
 
-createtable(cur)
+create_table_if_needed(cur)
 if desc and time:
-    parsedtime = parsetime(time)
-    createreminder(cur, desc, parsedtime)
+    parsedtime = parse_time(time)
+    add_reminder(cur, desc, parsedtime)
     con.commit()
 
-upcomingevents(cur)
+print_upcoming_events(cur)
