@@ -40,7 +40,7 @@ def parsetime(time):
     return parsedtime
 
 def upcomingevents(cur):
-    res = cur.execute("SELECT * FROM reminders ORDER BY eventtime").fetchall()
+    res = cur.execute("SELECT eventdesc, eventtime FROM reminders ORDER BY eventtime").fetchall()
     for i in res:
         print(i)
 
