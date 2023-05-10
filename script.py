@@ -9,7 +9,7 @@ def createreminder(cur, desc, time):
     if time == 0:
         print("Error! Can't insert 0 into time")
         return
-    query = f"INSERT INTO reminders (eventdesc, eventtime, recurring, frequency) VALUES ('{desc}', datetime({time}, 'unixepoch', false, 0))"
+    query = f"INSERT INTO reminders (eventdesc, eventtime, recurring, frequency) VALUES ('{desc}', datetime({time}, 'unixepoch'), false, 0)"
     cur.execute(query)
 
 def parsetime(time):
@@ -17,7 +17,7 @@ def parsetime(time):
     parsedtime = timemodule.time()
     # relative date parsing using heuristics
     # TODO: support fractional hours/days and round to nearest minute for safety
-    if "later" in time or "from now" in time:
+    if "later" in time or "from now" in time or True:
         amt = 0
         if "day" in time:
             amt = int(time.split("day")[0]) * 86400
@@ -39,6 +39,11 @@ def parsetime(time):
             parsedtime = 0
     return parsedtime
 
+def upcomingevents(cur):
+    res = cur.execute("SELECT * FROM reminders ORDER BY eventtime").fetchall()
+    for i in res:
+        print(i)
+
 desc = input("Enter event details: ")
 print("Enter when to remind you")
 time = input("(Hint- write 4 hours later or just a date like 13/4/23): ")
@@ -51,6 +56,4 @@ parsedtime = parsetime(time)
 createreminder(cur, desc, parsedtime)
 con.commit()
 
-res = cur.execute("SELECT * FROM reminders ORDER BY eventtime").fetchall()
-for i in res:
-    print(i)
+upcomingevents(cur)
