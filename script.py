@@ -42,7 +42,7 @@ def parsetime(time):
 def upcomingevents(cur):
     res = cur.execute("SELECT eventdesc, eventtime FROM reminders ORDER BY eventtime").fetchall()
     for i in res:
-        print(i)
+        print(f"Event: {i[0]}, to be triggered at {i[1]}")
 
 desc = input("Enter event details: ")
 print("Enter when to remind you")
@@ -52,8 +52,9 @@ con = sqlite3.connect("reminders.db")
 cur = con.cursor()
 
 createtable(cur)
-parsedtime = parsetime(time)
-createreminder(cur, desc, parsedtime)
-con.commit()
+if desc and time:
+    parsedtime = parsetime(time)
+    createreminder(cur, desc, parsedtime)
+    con.commit()
 
 upcomingevents(cur)
