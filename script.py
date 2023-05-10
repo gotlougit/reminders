@@ -70,8 +70,7 @@ def print_upcoming_events(cur):
         print(f"Event: {i[0]}, to be triggered within {pretty_time}")
 
 desc = input("Enter event details: ")
-print("Enter when to remind you")
-time = input("(Hint- write 4 hours later or just a date like 13/4/23): ")
+time = input("Enter when to remind you:")
 
 con = sqlite3.connect("reminders.db")
 cur = con.cursor()
