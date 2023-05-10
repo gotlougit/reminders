@@ -12,7 +12,7 @@ def add_reminder(cur, desc, time):
     query = f"INSERT INTO reminders (eventdesc, eventtime, recurring, frequency) VALUES ('{desc}', datetime({time}, 'unixepoch'), false, 0)"
     cur.execute(query)
 
-def parse_time(time):
+def parse_time_from_str(time):
     time = time.lower()
     parsedtime = timemodule.time()
     # relative date parsing using heuristics
@@ -40,10 +40,34 @@ def parse_time(time):
             parsedtime = 0
     return parsedtime
 
+def print_time_from_seconds(relativetime):
+    days = 0
+    hours = 0
+    minutes = 0
+    if relativetime > 86400:
+        days += (relativetime // 86400)
+        relativetime = relativetime % 86400
+    if relativetime > 3600:
+        hours += (relativetime // 3600)
+        relativetime = relativetime % 3600
+    if relativetime > 60:
+        minutes += (relativetime // 60)
+    pretty_time = ""
+    if days:
+        pretty_time += f"{days} day(s), "
+    if hours:
+        pretty_time += f"{hours} hour(s), "
+    if minutes:
+        pretty_time += f"{minutes} minute(s)"
+    return pretty_time
+
 def print_upcoming_events(cur):
-    res = cur.execute("SELECT eventdesc, eventtime FROM reminders ORDER BY eventtime").fetchall()
+    res = cur.execute("SELECT eventdesc, strftime('%s', eventtime) FROM reminders ORDER BY eventtime").fetchall()
     for i in res:
-        print(f"Event: {i[0]}, to be triggered at {i[1]}")
+        unixtime = int(i[1])
+        relativetime = unixtime - timemodule.time()
+        pretty_time = print_time_from_seconds(relativetime)
+        print(f"Event: {i[0]}, to be triggered within {pretty_time}")
 
 desc = input("Enter event details: ")
 print("Enter when to remind you")
@@ -54,7 +78,7 @@ cur = con.cursor()
 
 create_table_if_needed(cur)
 if desc and time:
-    parsedtime = parse_time(time)
+    parsedtime = parse_time_from_str(time)
     add_reminder(cur, desc, parsedtime)
     con.commit()
 
