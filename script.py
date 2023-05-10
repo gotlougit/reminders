@@ -61,13 +61,18 @@ def print_time_from_seconds(relativetime):
         pretty_time += f"{minutes} minute(s)"
     return pretty_time
 
-def print_upcoming_events(cur):
+def get_upcoming_events(cur):
     res = cur.execute("SELECT eventdesc, strftime('%s', eventtime) FROM reminders ORDER BY eventtime").fetchall()
-    for i in res:
-        unixtime = int(i[1])
+    return res
+
+def print_upcoming_events(cur):
+    events = get_upcoming_events(cur)
+    for event in events:
+        desc = event[0]
+        unixtime = int(event[1])
         relativetime = unixtime - timemodule.time()
         pretty_time = print_time_from_seconds(relativetime)
-        print(f"Event: {i[0]}, to be triggered within {pretty_time}")
+        print(f"Event: {desc}, to be triggered within {pretty_time}")
 
 desc = input("Enter event details: ")
 time = input("Enter when to remind you:")
