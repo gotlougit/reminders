@@ -17,7 +17,8 @@ def parse_time(time):
     parsedtime = timemodule.time()
     # relative date parsing using heuristics
     # TODO: support fractional hours/days and round to nearest minute for safety
-    if "later" in time or "from now" in time or True:
+    #if "later" in time or "from now" in time:
+    if True:
         amt = 0
         if "day" in time:
             amt = int(time.split("day")[0]) * 86400
