@@ -65,6 +65,16 @@ def get_upcoming_events(cur):
     res = cur.execute("SELECT eventdesc, strftime('%s', eventtime) FROM reminders ORDER BY eventtime").fetchall()
     return res
 
+def check_for_reminder(cur):
+    event = get_upcoming_events(cur)[0]
+    unixtime = int(event[1])
+    relativetime = unixtime - timemodule.time()
+    # If we are within one minute to event being triggered
+    # bite the bullet and remind the user
+    if relativetime < 60:
+        print("REMINDER TRIGGERING")
+        print(f"Event: {event[0]}")
+
 def print_upcoming_events(cur):
     events = get_upcoming_events(cur)
     for event in events:
